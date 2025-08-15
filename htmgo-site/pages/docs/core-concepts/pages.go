@@ -11,7 +11,7 @@ var ExcludeRootSnippet = `automatic_page_routing_ignore: ["pages/root.go"]`
 var AbstractedRootPageUsageSnippet = `func UserPage(ctx *h.RequestContext) *h.Page {
 	return base.RootPage(
 		h.Div(
-			h.Pf("User ID: %s", ctx.Param("id")),
+			h.Pf("User ID: %s", ctx.UrlParam("id")),
 		),
 }`
 
@@ -88,7 +88,7 @@ func autoRegistration() *h.Element {
 		users.go -> /users
 		users.$id.go -> /users/:id 
 		`),
-		HelpText(`Note: id parameter can be accessed in your page with ctx.Param("id")`),
+		HelpText(`Note: id parameter can be accessed in your page with ctx.UrlParam("id")`),
 		Text(`
 		You may put any functions you like in your pages file, auto registration will ONLY register functions that return *h.Page
 		`),
