@@ -18,7 +18,9 @@ var PartialsSnippet = `func CurrentTimePartial(ctx *h.RequestContext) *h.Partial
 
 var examplePageSnippet = `func CurrentTimePage(ctx *h.RequestContext) *h.Page {
 	return RootPage(
-		h.GetPartial(partials.CurrentTimePartial, "load, every 1s")
+		h.Div(
+           h.GetPartial(partials.CurrentTimePartial, "load, every 1s")
+		)
 	)
 }`
 
