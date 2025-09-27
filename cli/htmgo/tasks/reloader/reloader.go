@@ -2,16 +2,17 @@ package reloader
 
 import (
 	"fmt"
+	"log/slog"
+	"strings"
+	"sync"
+	"time"
+
 	"github.com/fsnotify/fsnotify"
 	"github.com/maddalax/htmgo/cli/htmgo/tasks/astgen"
 	"github.com/maddalax/htmgo/cli/htmgo/tasks/copyassets"
 	"github.com/maddalax/htmgo/cli/htmgo/tasks/css"
 	"github.com/maddalax/htmgo/cli/htmgo/tasks/run"
 	"github.com/maddalax/htmgo/cli/htmgo/tasks/util"
-	"log/slog"
-	"strings"
-	"sync"
-	"time"
 )
 
 type Change struct {
@@ -167,7 +168,12 @@ func OnFileChange(version string, events []*fsnotify.Event) {
 	wg.Wait()
 
 	if tasks.Run {
-		go run.Server()
+		go func() {
+			err := run.Server(true)
+			if err != nil {
+				slog.Error("error restarting server", slog.String("error", err.Error()))
+			}
+		}()
 	}
 
 	slog.Info("reloaded in", slog.Duration("duration", time.Since(now)))

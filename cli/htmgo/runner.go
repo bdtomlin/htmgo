@@ -4,6 +4,10 @@ import (
 	"bufio"
 	"flag"
 	"fmt"
+	"log/slog"
+	"os"
+	"strings"
+
 	"github.com/maddalax/htmgo/cli/htmgo/internal"
 	"github.com/maddalax/htmgo/cli/htmgo/tasks/astgen"
 	"github.com/maddalax/htmgo/cli/htmgo/tasks/copyassets"
@@ -13,9 +17,6 @@ import (
 	"github.com/maddalax/htmgo/cli/htmgo/tasks/process"
 	"github.com/maddalax/htmgo/cli/htmgo/tasks/reloader"
 	"github.com/maddalax/htmgo/cli/htmgo/tasks/run"
-	"log/slog"
-	"os"
-	"strings"
 )
 
 const version = "1.0.6"
@@ -85,7 +86,7 @@ func main() {
 		fmt.Printf("Starting server...\n")
 		process.KillAll()
 		go func() {
-			_ = run.Server()
+			_ = run.Server(false)
 		}()
 		startWatcher(reloader.OnFileChange)
 	} else {
@@ -122,7 +123,7 @@ func main() {
 			_ = astgen.GenAst(process.ExitOnError)
 		} else if taskName == "run" {
 			run.MakeBuildable()
-			_ = run.Server(process.ExitOnError)
+			_ = run.Server(false, process.ExitOnError)
 		} else if taskName == "template" {
 			name := ""
 			if len(os.Args) > 2 {

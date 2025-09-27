@@ -2,13 +2,14 @@ package run
 
 import (
 	"fmt"
-	"github.com/maddalax/htmgo/cli/htmgo/tasks/process"
 	"io/fs"
 	"os"
 	"path/filepath"
+
+	"github.com/maddalax/htmgo/cli/htmgo/tasks/process"
 )
 
-func Server(flags ...process.RunFlag) error {
+func Server(isWatcher bool, flags ...process.RunFlag) error {
 	buildDir := "./__htmgo/temp-build"
 	_ = os.RemoveAll(buildDir)
 	err := os.Mkdir(buildDir, 0755)
@@ -17,8 +18,14 @@ func Server(flags ...process.RunFlag) error {
 		return err
 	}
 
-	process.RunOrExit(process.NewRawCommand("", fmt.Sprintf("go build -o %s", buildDir)))
-
+	if isWatcher {
+		err := process.Run(process.NewRawCommand("", fmt.Sprintf("go build -o %s", buildDir)))
+		if err != nil {
+			return err
+		}
+	} else {
+		process.RunOrExit(process.NewRawCommand("", fmt.Sprintf("go build -o %s", buildDir)))
+	}
 	binaryPath := ""
 
 	// find the binary that was built
